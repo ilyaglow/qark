@@ -1,9 +1,10 @@
-FROM python:2.7
+FROM python:2.7-alpine
 LABEL maintainer <ilya@ilyaglotov.com>
 
 # Install JRE
-RUN apt-get update && apt-get -y install openjdk-7-jre-headless \
-    curl
+RUN apk update && apk add openjdk7-jre-base \
+    curl \
+&& rm -rf /var/cache/apk/*
 
 RUN mkdir /qark
 WORKDIR /qark
@@ -18,6 +19,7 @@ RUN tar xzf ${ANDROID_SDK_PACKAGE}
 # Install QARK dependencies
 ADD . /qark
 WORKDIR /qark
+RUN rm -rf .git
 RUN pip install -r requirements.txt
 
 # Volume for an APK or application sources
