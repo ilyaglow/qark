@@ -1,10 +1,10 @@
 FROM python:2.7-alpine
-LABEL maintainer <ilya@ilyaglotov.com>
+LABEL url "https://www.github.com/linkedin/qark"
 
 # Install JRE
 RUN apk update && apk add openjdk7-jre-base \
     curl \
-&& rm -rf /var/cache/apk/*
+  && rm -rf /var/cache/apk/*
 
 RUN mkdir /qark
 WORKDIR /qark
@@ -13,16 +13,17 @@ WORKDIR /qark
 ENV ANDROID_SDK_VERSION r24.3.4
 ENV HOST_OS linux
 ENV ANDROID_SDK_PACKAGE="android-sdk_${ANDROID_SDK_VERSION}-${HOST_OS}.tgz"
-RUN curl -s https://dl.google.com/android/${ANDROID_SDK_PACKAGE} -o ${ANDROID_SDK_PACKAGE}
+RUN curl -s https://dl.google.com/android/${ANDROID_SDK_PACKAGE} \
+    -o ${ANDROID_SDK_PACKAGE} \
+  && apk del curl
 RUN tar xzf ${ANDROID_SDK_PACKAGE}
 
 # Install QARK dependencies
 ADD . /qark
 WORKDIR /qark
-RUN rm -rf .git
 RUN pip install -r requirements.txt
 
-# Volume for an APK or application sources
+# Volume for an APK or application's sources
 RUN mkdir /apk
 VOLUME /apk
 
